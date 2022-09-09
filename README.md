@@ -8,3 +8,9 @@ Currently it runs only in the current directory and does not recurse into subdir
 ```bash
 brew install obay/tap/tfren
 ```
+
+## Usage
+Simply switch to the directory containing your Terraform files and run `tfren`.
+```bash
+tfren
+```
