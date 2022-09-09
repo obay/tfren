@@ -8,8 +8,17 @@ Currently it runs only in the current directory and does not recurse into subdir
 
 ## Installation
 ### Homebrew
+
+#### On Linux & MacOS
+```bash
 ```bash
 brew install obay/tap/tfren
+```
+
+### On Windows using [Scoop](https://scoop.sh)
+```powershell
+scoop bucket add org https://github.com/org/repo.git
+scoop install org/drumroll
 ```
 
 ## Usage
