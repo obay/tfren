@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -30,12 +31,28 @@ func main() {
 					fileNameParts := strings.Split(line, " ")
 					if len(fileNameParts) == 4 {
 						newFileName := fileNameParts[0] + "." + strings.Replace(fileNameParts[1], "\"", "", -1) + "." + strings.Replace(fileNameParts[2], "\"", "", -1) + ".tf"
-						if file.Name() != newFileName {
-							e := os.Rename(file.Name(), newFileName)
-							if e != nil {
-								log.Fatal(e)
+
+						/* Make sure file with the same name doesn't already exist ***********************************************************************************************/
+						if _, err := os.Stat(file.Name()); err == nil {
+							// path/to/whatever exists
+							if file.Name() != newFileName {
+								fmt.Println("A file with the name \"" + newFileName + "\" exists already. Unable to rename \"" + file.Name() + "\". Skipping...")
 							}
-							fmt.Println("Renamed file from " + file.Name() + " to " + newFileName)
+							continue
+						} else if errors.Is(err, os.ErrNotExist) {
+							// path/to/whatever does *not* exist
+							// Rename file
+							if file.Name() != newFileName {
+								e := os.Rename(file.Name(), newFileName)
+								if e != nil {
+									log.Fatal(e)
+								}
+								fmt.Println("Renamed file from " + file.Name() + " to " + newFileName)
+							}
+						} else {
+							// File may or may not exist. See err for details.
+							// Therefore, do *NOT* use !os.IsNotExist(err) to test for file existence
+							log.Fatal(err)
 						}
 					}
 				}
