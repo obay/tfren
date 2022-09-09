@@ -14,7 +14,7 @@ builds:
 # Custom ldflags templates.
     # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
     ldflags:
-      - -X 'github.com/obay/rcmt/cmd.VersionString={{.Env.RELEASE}}'
+      - -X 'github.com/obay/tfren/cmd.VersionString={{.Env.RELEASE}}'
 archives:
   - replacements:
       darwin: Darwin
@@ -49,7 +49,7 @@ brews:
       token: "{{ .Env.GITHUB_TOKEN }}"
 
     # Template for the url which is determined by the given Token (Github or gitlab)
-    url_template: "http://github.com/obay/rcmt/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
 
     # Git author used to commit to the repository.
     # Defaults are shown.
@@ -59,7 +59,7 @@ brews:
 
     # Your app's homepage.
     # Default is empty.
-    homepage: "https://Github.com/obay/rcmt"
+    homepage: "https://Github.com/obay/tfren"
 
     # Your app's description.
     # Default is empty.
@@ -82,9 +82,9 @@ brews:
     # This is also picked up by the homebrew-core bot
     # Default is empty.
     test: |
-      assert shell_output("#{bin}/rcmt version")
+      assert shell_output("#{bin}/tfren version")
 
     # Custom install script for brew.
     # Default is 'bin.install "program"'.
     install: |
-      bin.install "rcmt"
+      bin.install "tfren"
