@@ -59,11 +59,10 @@ brews:
 
     # Your app's homepage.
     # Default is empty.
-    homepage: "https://Github.com/obay/tfren"
+    homepage: "https://github.com/obay/tfren"
 
     # Your app's description.
-    # Default is empty.
-    description: "A rudimentary configuration management tool for Slack Challenge."
+    description: "A tool to rename Terraform files accodrind to the resource type and name."
 
     # Setting this will prevent goreleaser to actually try to commit the updated
     # formula - instead, the formula file will be stored on the dist folder only,
