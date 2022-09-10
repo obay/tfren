@@ -7,7 +7,6 @@ Currently it runs only in the current directory and does not recurse into subdir
 
 
 ## Installation
-### Homebrew
 
 #### On Linux & MacOS using [Homebrew](https://brew.sh)
 ```bash
