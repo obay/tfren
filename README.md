@@ -16,8 +16,8 @@ brew install obay/tap/tfren
 
 ### On Windows using [Scoop](https://scoop.sh)
 ```powershell
-scoop bucket add org https://github.com/org/repo.git
-scoop install org/drumroll
+scoop bucket add org https://github.com/obay/tfren.git
+scoop install obay/tfren
 ```
 
 ## Usage
