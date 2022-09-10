@@ -11,7 +11,6 @@ Currently it runs only in the current directory and does not recurse into subdir
 
 #### On Linux & MacOS
 ```bash
-```bash
 brew install obay/tap/tfren
 ```
 
