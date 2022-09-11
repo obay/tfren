@@ -31,13 +31,15 @@ func main() {
 					fileNameParts := strings.Split(line, " ")
 					if len(fileNameParts) == 4 {
 						newFileName := fileNameParts[0] + "." + strings.Replace(fileNameParts[1], "\"", "", -1) + "." + strings.Replace(fileNameParts[2], "\"", "", -1) + ".tf"
-
+						/* Skip if the file is named correctly already ***********************************************************************************************************/
+						if newFileName == file.Name() {
+							fmt.Println("Named correctly: " + file.Name() + ". Skipping...")
+							continue
+						}
 						/* Make sure file with the same name doesn't already exist ***********************************************************************************************/
-						if _, err := os.Stat(file.Name()); err == nil {
+						if _, err := os.Stat(newFileName); err == nil {
 							// path/to/whatever exists
-							if file.Name() == newFileName {
-								fmt.Println("A file with the name \"" + newFileName + "\" exists already. Unable to rename \"" + file.Name() + "\". Skipping...")
-							}
+							fmt.Println("A file with the name \"" + newFileName + "\" exists already. Unable to rename \"" + file.Name() + "\". Skipping...")
 							continue
 						} else if errors.Is(err, os.ErrNotExist) {
 							// path/to/whatever does *not* exist
