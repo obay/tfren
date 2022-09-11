@@ -7,14 +7,13 @@ Currently it runs only in the current directory and does not recurse into subdir
 
 
 ## Installation
-### Homebrew
 
-#### On Linux & MacOS
+#### On Linux & MacOS using [Homebrew](https://brew.sh)
 ```bash
 brew install obay/tap/tfren
 ```
 
-### On Windows using [Scoop](https://scoop.sh)
+#### On Windows using [Scoop](https://scoop.sh)
 ```powershell
 scoop bucket add obay https://github.com/obay/scoop-bucket.git
 scoop install obay/tfren
