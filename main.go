@@ -35,7 +35,7 @@ func main() {
 						/* Make sure file with the same name doesn't already exist ***********************************************************************************************/
 						if _, err := os.Stat(file.Name()); err == nil {
 							// path/to/whatever exists
-							if file.Name() != newFileName {
+							if file.Name() == newFileName {
 								fmt.Println("A file with the name \"" + newFileName + "\" exists already. Unable to rename \"" + file.Name() + "\". Skipping...")
 							}
 							continue
