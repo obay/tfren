@@ -3,14 +3,20 @@ package main
 import (
 	"bufio"
 	"errors"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 )
 
 func main() {
-	files, err := ioutil.ReadDir("./")
+	currentdirectory, err := os.Open(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer currentdirectory.Close()
+
+	files, err := currentdirectory.Readdir(-1)
 	if err != nil {
 		log.Fatal(err)
 	}
