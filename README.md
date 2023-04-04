@@ -1,4 +1,5 @@
 # Terraform Rename (tfren)
+
 Terraform Rename (tfren) is a tool to rename Terraform files using the resource type and name.
 
 Currently it runs only in the current directory and does not recurse into subdirectories.
@@ -8,19 +9,23 @@ Currently it runs only in the current directory and does not recurse into subdir
 
 ## Installation
 
-#### On Linux & MacOS using [Homebrew](https://brew.sh)
+### On Linux & macOS using [Homebrew](https://brew.sh)
+
 ```bash
 brew install obay/tap/tfren
 ```
 
-#### On Windows using [Scoop](https://scoop.sh)
+### On Windows using [Scoop](https://scoop.sh)
+
 ```powershell
 scoop bucket add obay https://github.com/obay/scoop-bucket.git
 scoop install obay/tfren
 ```
 
 ## Usage
+
 Simply switch to the directory containing your Terraform files and run `tfren`.
+
 ```bash
 tfren
 ```
