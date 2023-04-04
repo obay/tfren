@@ -24,7 +24,6 @@ case $1 in
     NEW_PATCH=0
     ;;
   "patch")
-    echo "patch"
     NEW_MAJOR=$CURRENT_MAJOR
     NEW_MINOR=$CURRENT_MINOR
     NEW_PATCH=$((CURRENT_PATCH+1))
@@ -36,7 +35,7 @@ case $1 in
 esac
 
 export RELEASE="v$NEW_MAJOR.$NEW_MINOR.$NEW_PATCH"
-echo $RELEASE
+echo "Releasing $RELEASE..."
 git tag -a $RELEASE -m "Release $RELEASE"
 git push origin $RELEASE
 goreleaser release --rm-dist
