@@ -28,7 +28,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			defer f.Close()
+
 			scanner := bufio.NewScanner(f)
 			for scanner.Scan() {
 				line := scanner.Text()
@@ -56,6 +56,7 @@ func main() {
 							// path/to/whatever does *not* exist
 							// Rename file
 							if file.Name() != newFileName {
+								f.Close() // close the file before renaming it
 								e := os.Rename(file.Name(), newFileName)
 								if e != nil {
 									log.Fatal(e)
@@ -71,6 +72,9 @@ func main() {
 					break // skip rest of the file once first resource is found
 				}
 			}
+
+			// Close the file explicitly, instead of using defer
+			// f.Close()
 
 			if err := scanner.Err(); err != nil {
 				log.Fatal(err)
