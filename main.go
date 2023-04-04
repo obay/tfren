@@ -74,7 +74,7 @@ func main() {
 			}
 
 			// Close the file explicitly, instead of using defer
-			// f.Close()
+			f.Close()
 
 			if err := scanner.Err(); err != nil {
 				log.Fatal(err)
