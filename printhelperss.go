@@ -3,31 +3,31 @@ package main
 import "github.com/fatih/color"
 
 func PrintErrorf(s string) {
-	errorPrinter := color.New(color.FgRed)
-	errorPrinter.Printf(s)
+	printer := color.New(color.FgRed)
+	printer.Printf(s)
 }
 
 func PrintError(s string) {
-	errorPrinter := color.New(color.FgRed)
-	errorPrinter.Printf(s + "\n")
+	printer := color.New(color.FgRed)
+	printer.Printf(s + "\n")
 }
 
 func PrintWarningf(s string) {
-	errorPrinter := color.New(color.FgYellow)
-	errorPrinter.Printf(s)
+	printer := color.New(color.FgYellow)
+	printer.Printf(s)
 }
 
 func PrintWarning(s string) {
-	errorPrinter := color.New(color.FgYellow)
-	errorPrinter.Printf(s + "\n")
+	printer := color.New(color.FgYellow)
+	printer.Printf(s + "\n")
 }
 
 func PrintSuccessf(s string) {
-	errorPrinter := color.New(color.FgGreen)
-	errorPrinter.Printf(s)
+	printer := color.New(color.FgGreen)
+	printer.Printf(s)
 }
 
 func PrintSuccess(s string) {
-	errorPrinter := color.New(color.FgGreen)
-	errorPrinter.Printf(s + "\n")
+	printer := color.New(color.FgGreen)
+	printer.Printf(s + "\n")
 }

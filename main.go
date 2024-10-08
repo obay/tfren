@@ -53,7 +53,7 @@ func renameFileBasedOnContent(file os.FileInfo) {
 			continue
 		}
 
-		prefixes := []string{"resource", "provider", "variable", "terraform", "module", "data"} // Add any other prefixes to this slice
+		prefixes := []string{"resource", "data", "provider", "variable", "module", "output", "terraform", "import"} // Add any other prefixes to this slice
 		matches := false
 		for _, prefix := range prefixes {
 			if strings.HasPrefix(line, prefix) {
@@ -96,7 +96,13 @@ func generateNewFileName(line string) string {
 	if strings.HasPrefix(line, "module") && len(parts) == 3 {
 		return parts[0] + "." + parts[1] + ".tf"
 	}
+	if strings.HasPrefix(line, "output") && len(parts) == 3 {
+		return parts[0] + "." + parts[1] + ".tf"
+	}
 	if strings.HasPrefix(line, "terraform") && len(parts) == 2 {
+		return parts[0] + ".tf"
+	}
+	if strings.HasPrefix(line, "import") && len(parts) == 2 {
 		return parts[0] + ".tf"
 	}
 	return ""
