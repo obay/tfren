@@ -1,9 +1,20 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+
 before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod tidy
     # you may remove this if you don't need go generate
     - go generate ./...
+
 builds:
   - env:
       - CGO_ENABLED=0
@@ -11,42 +22,42 @@ builds:
       - linux
       - windows
       - darwin
-# Custom ldflags templates.
-    # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
-    ldflags:
-      - -X 'github.com/obay/tfren/cmd.VersionString={{.Env.RELEASE}}'
+
 archives:
-  - replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      386: i386
-      amd64: x86_64
-checksum:
-  name_template: 'checksums.txt'
-# signs:
-#   - artifacts: checksum
-#     args: ["--batch", "-u", "{{ .Env.GPG_FINGERPRINT }}", "--output", "${signature}", "--detach-sign", "${artifact}"]
-snapshot:
-  name_template: "{{ .Tag }}-next"
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
+
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
+
 brews:
-  -
+  - name: tfren
     # GOARM to specify which 32-bit arm version to use if there are multiple versions
     # from the build section. Brew formulas support atm only one 32-bit version.
     # Default is 6 for all artifacts or each id if there a multiple versions.
     goarm: 6
 
     # GitHub/GitLab repository to push the formula to
-    tap:
+    repository:
       owner: obay
       name: homebrew-tap
       token: "{{ .Env.GITHUB_TOKEN }}"
+      branch: main
 
     # Template for the url which is determined by the given Token (Github or gitlab)
     url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
@@ -88,72 +99,22 @@ brews:
     install: |
       bin.install "tfren"
 
-scoop:
-  # Template for the url which is determined by the given Token (github or gitlab)
-  # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-  # Default for gitlab is "https://gitlab.com/<repo_owner>/<repo_name>/-/releases/{{ .Tag }}/downloads/{{ .ArtifactName }}"
-  # Default for gitea is "https://gitea.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-  url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-
-  # Repository to push the app manifest to.
-  bucket:
-    owner: obay
-    name: scoop-bucket
-
-    # Optionally a branch can be provided.
-    # Defaults to the default repository branch.
-    branch: main
-
-    # Optionally a token can be provided, if it differs from the token provided to GoReleaser
-    # token: "{{ .Env.SCOOP_TAP_GITHUB_TOKEN }}"
-    token: "{{ .Env.GITHUB_TOKEN }}"
-
-  # Folder inside the repository to put the scoop.
-  # Default is the root folder.
-  # folder: Scoops
-
-  # Git author used to commit to the repository.
-  # Defaults are shown.
-  commit_author:
-    name: goreleaserbot
-    email: goreleaser@obay.cloud
-
-  # The project name and current git tag are used in the format string.
-  commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
-
-  # Your app's homepage.
-  # Default is empty.
-  homepage: "https://github.com/obay/tfren"
-
-  # Your app's description.
-  # Default is empty.
-  description: "A tool to rename Terraform files accodrind to the resource type and name."
-
-  # Your app's license
-  # Default is empty.
-  # license: MIT
-
-  # Setting this will prevent goreleaser to actually try to commit the updated
-  # manifest leaving the responsibility of publishing it to the user.
-  # If set to auto, the release will not be uploaded to the scoop bucket
-  # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1
-  # Default is false.
-  # skip_upload: false
-
-  # Persist data between application updates
-  persist:
-  - "data"
-  - "config.toml"
-
-  # An array of commands to be executed before an application is installed.
-  # Default is empty.
-  pre_install: ["Write-Host 'Running preinstall command'"]
-
-  # An array of commands to be executed after an application is installed.
-  # Default is empty.
-  post_install: ["Write-Host 'Running postinstall command'"]
-
-  # GOAMD64 to specify which amd64 version to use if there are multiple versions
-  # from the build section.
-  # Default is v1.
-  # goamd64: v3
+scoops:
+  - name: tfren
+    url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    commit_author:
+      name: goreleaserbot
+      email: ahmad@obay.cloud
+    commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
+    homepage: "https://github.com/obay/tfren"
+    description: "A tool to rename Terraform files accodrind to the resource type and name."
+    license: MIT
+    persist:
+      - "data"
+      - "config.toml"
+    repository:
+      owner: obay
+      name: scoop-bucket
+      branch: main
+      token: "{{ .Env.GITHUB_TOKEN }}"
+      
