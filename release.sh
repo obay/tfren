@@ -38,4 +38,4 @@ export RELEASE="v$NEW_MAJOR.$NEW_MINOR.$NEW_PATCH"
 echo "Releasing $RELEASE..."
 git tag -a $RELEASE -m "Release $RELEASE"
 git push origin $RELEASE
-goreleaser release
+goreleaser release --clean
