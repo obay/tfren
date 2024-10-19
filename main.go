@@ -40,7 +40,7 @@ func isValidFile(file os.FileInfo) bool {
 func renameFileBasedOnContent(file os.FileInfo) {
 	f, err := os.Open(file.Name())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to open file %s: %v", file.Name(), err)
 	}
 	defer f.Close()
 
@@ -68,13 +68,15 @@ func renameFileBasedOnContent(file os.FileInfo) {
 				PrintSuccess("Named correctly: " + file.Name() + ". Skipping...")
 				break
 			}
+			// Ensure file is closed before renaming (especially for Windows)
+			f.Close()
 			handleFileRenaming(file.Name(), newFileName)
 			break
 		}
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error reading file %s: %v", file.Name(), err)
 	}
 }
 
@@ -120,12 +122,12 @@ func handleFileRenaming(oldName, newName string) {
 		PrintError("A file with the name \"" + newName + "\" exists already. Unable to rename \"" + oldName + "\". Skipping...")
 		return
 	} else if errors.Is(err, os.ErrNotExist) {
-		e := os.Rename(oldName, newName)
-		if e != nil {
-			log.Fatal(e)
+		// Attempt renaming the file
+		if err := os.Rename(oldName, newName); err != nil {
+			log.Fatalf("Failed to rename file from %s to %s: %v", oldName, newName, err)
 		}
 		PrintWarning("Renamed file from " + oldName + " to " + newName)
 	} else {
-		log.Fatal(err)
+		log.Fatalf("Failed to check file existence: %v", err)
 	}
 }
