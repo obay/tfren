@@ -1,18 +1,8 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
-
-# The lines below are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/need to use them.
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
-
 version: 2
 
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
     - go generate ./...
 
 builds:
@@ -27,7 +17,7 @@ builds:
 
 archives:
   - format: tar.gz
-    # this name template makes the OS and Arch compatible with the results of `uname`.
+
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -67,8 +57,8 @@ brews:
     # Git author used to commit to the repository.
     # Defaults are shown.
     commit_author:
-      name: goreleaserbot
-      email: goreleaser@obay.cloud
+      name: Ahmad Obay
+      email: ahmad@obay.cloud
 
     # Your app's homepage.
     # Default is empty.
@@ -105,7 +95,7 @@ scoops:
   - name: tfren
     url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     commit_author:
-      name: goreleaserbot
+      name: Ahmad Obay
       email: ahmad@obay.cloud
     commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
     homepage: "https://github.com/obay/tfren"
