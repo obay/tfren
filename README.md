@@ -29,3 +29,7 @@ Simply switch to the directory containing your Terraform files and run `tfren`.
 ```bash
 tfren
 ```
+
+## Known Issues
+
+- Comments at the start of Terraform files are not handled by the command line parser. The tool expects the first line to contain the resource definition.
