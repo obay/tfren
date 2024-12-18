@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"os"
 	"strings"
 
 	"github.com/charmbracelet/log"
+	"github.com/hashicorp/hcl/v2/hclparse"
 )
 
 func main() {
@@ -38,83 +38,70 @@ func isValidFile(file os.FileInfo) bool {
 }
 
 func renameFileBasedOnContent(file os.FileInfo) {
-	f, err := os.Open(file.Name())
+	content, err := os.ReadFile(file.Name())
 	if err != nil {
-		log.Fatalf("Failed to open file %s: %v", file.Name(), err)
+		log.Fatalf("Failed to read file %s: %v", file.Name(), err)
 	}
-	defer f.Close()
 
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := scanner.Text()
+	parser := hclparse.NewParser()
+	_, diags := parser.ParseHCL(content, file.Name())
+	if diags.HasErrors() {
+		log.Warnf("Failed to parse file %s: %v", file.Name(), diags)
+		return
+	}
 
-		// If the line is a comment, skip it
-		if strings.HasPrefix(line, "#") {
+	newFileName := generateNewFileNameFromHCL(string(content))
+	if newFileName == "" {
+		log.Warnf("Could not determine new name for %s", file.Name())
+		return
+	}
+
+	if newFileName == file.Name() {
+		PrintSuccess("Named correctly: " + file.Name() + ". Skipping...")
+		return
+	}
+
+	handleFileRenaming(file.Name(), newFileName)
+}
+
+func generateNewFileNameFromHCL(content string) string {
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+
+		// Skip comments and empty lines
+		if strings.HasPrefix(line, "#") || strings.HasPrefix(line, "//") || line == "" {
 			continue
 		}
 
-		prefixes := []string{"resource", "data", "provider", "variable", "module", "output", "terraform", "import"} // Add any other prefixes to this slice
-		matches := false
-		for _, prefix := range prefixes {
-			if strings.HasPrefix(line, prefix) {
-				matches = true
-				break
-			}
+		// Extract the first word to determine the block type
+		parts := strings.Fields(line)
+		if len(parts) == 0 {
+			continue
 		}
 
-		if matches {
-			newFileName := generateNewFileName(line)
-			if newFileName == file.Name() {
-				PrintSuccess("Named correctly: " + file.Name() + ". Skipping...")
-				break
+		switch parts[0] {
+		case "resource", "data":
+			if len(parts) >= 3 {
+				resourceType := strings.Trim(parts[1], "\"")
+				resourceName := strings.Trim(parts[2], "\"")
+				return parts[0] + "." + resourceType + "." + resourceName + ".tf"
 			}
-			// Ensure file is closed before renaming (especially for Windows)
-			f.Close()
-			handleFileRenaming(file.Name(), newFileName)
-			break
+		case "variable", "module", "output":
+			if len(parts) >= 2 {
+				name := strings.Trim(parts[1], "\"")
+				return parts[0] + "." + name + ".tf"
+			}
+		case "provider":
+			if len(parts) >= 2 {
+				name := strings.Trim(parts[1], "\"")
+				return parts[0] + "." + name + ".tf"
+			}
+		case "terraform":
+			return "terraform.tf"
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatalf("Error reading file %s: %v", file.Name(), err)
-	}
-}
-
-func generateNewFileName(line string) string {
-	parts := strings.Split(line, " ")
-	parts = removeQuotesFromSlice(parts)
-	if strings.HasPrefix(line, "resource") && len(parts) == 4 {
-		return parts[0] + "." + parts[1] + "." + parts[2] + ".tf"
-	}
-	if strings.HasPrefix(line, "data") && len(parts) == 4 {
-		return parts[0] + "." + parts[1] + "." + parts[2] + ".tf"
-	}
-	if strings.HasPrefix(line, "provider") && len(parts) == 3 {
-		return parts[0] + "." + parts[1] + ".tf"
-	}
-	if strings.HasPrefix(line, "variable") && len(parts) == 3 {
-		return parts[0] + "." + parts[1] + ".tf"
-	}
-	if strings.HasPrefix(line, "module") && len(parts) == 3 {
-		return parts[0] + "." + parts[1] + ".tf"
-	}
-	if strings.HasPrefix(line, "output") && len(parts) == 3 {
-		return parts[0] + "." + parts[1] + ".tf"
-	}
-	if strings.HasPrefix(line, "terraform") && len(parts) == 2 {
-		return parts[0] + ".tf"
-	}
-	if strings.HasPrefix(line, "import") && len(parts) == 2 {
-		return parts[0] + ".tf"
 	}
 	return ""
-}
-
-func removeQuotesFromSlice(slice []string) []string {
-	for i, s := range slice {
-		slice[i] = strings.Replace(s, "\"", "", -1)
-	}
-	return slice
 }
 
 func handleFileRenaming(oldName, newName string) {
