@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"flag"
+	"fmt"
 	"os"
 	"strings"
 
@@ -11,6 +13,14 @@ import (
 )
 
 func main() {
+	versionFlag := flag.Bool("version", false, "Print version information")
+	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("v%s\n", version)
+		return
+	}
+
 	files := getCurrentDirectoryFiles()
 	for _, file := range files {
 		if isValidFile(file) {
