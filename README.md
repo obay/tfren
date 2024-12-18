@@ -6,7 +6,6 @@ Currently it runs only in the current directory and does not recurse into subdir
 
 `tfren` assumes you have one resource per file and uses the the first line (e.g. `resource "azurerm_virtual_network" "sandbox-vnet" {`) to build the file name (which will be `resource.azurerm_virtual_network.sandbox-vnet.tf` in this case).
 
-
 ## Installation
 
 ### On Linux & macOS using [Homebrew](https://brew.sh)
