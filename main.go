@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/hashicorp/hcl/v2/hclparse"
+	"github.com/hashicorp/hcl/v2/hclsyntax"
 )
 
 func main() {
@@ -65,38 +66,45 @@ func renameFileBasedOnContent(file os.FileInfo) {
 }
 
 func generateNewFileNameFromHCL(content string) string {
-	lines := strings.Split(content, "\n")
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
+	parser := hclparse.NewParser()
+	file, diags := parser.ParseHCL([]byte(content), "temp.tf")
+	if diags.HasErrors() {
+		return ""
+	}
 
-		// Skip comments and empty lines
-		if strings.HasPrefix(line, "#") || strings.HasPrefix(line, "//") || line == "" {
-			continue
-		}
+	// Get the root body of the HCL file
+	body := file.Body.(*hclsyntax.Body)
 
-		// Extract the first word to determine the block type
-		parts := strings.Fields(line)
-		if len(parts) == 0 {
-			continue
-		}
-
-		switch parts[0] {
+	// Look through all blocks in the file
+	for _, block := range body.Blocks {
+		switch block.Type {
 		case "resource", "data":
-			if len(parts) >= 3 {
-				resourceType := strings.Trim(parts[1], "\"")
-				resourceName := strings.Trim(parts[2], "\"")
-				return parts[0] + "." + resourceType + "." + resourceName + ".tf"
-			}
-		case "variable", "module", "output":
-			if len(parts) >= 2 {
-				name := strings.Trim(parts[1], "\"")
-				return parts[0] + "." + name + ".tf"
+			if len(block.Labels) >= 2 {
+				return block.Type + "." + block.Labels[0] + "." + block.Labels[1] + ".tf"
 			}
 		case "provider":
-			if len(parts) >= 2 {
-				name := strings.Trim(parts[1], "\"")
-				return parts[0] + "." + name + ".tf"
+			if len(block.Labels) >= 1 {
+				providerName := block.Labels[0]
+				// Look for alias attribute in the block
+				for name, attr := range block.Body.Attributes {
+					if name == "alias" {
+						// Get the alias value
+						if val, diags := attr.Expr.Value(nil); !diags.HasErrors() {
+							alias := val.AsString()
+							if alias != "" {
+								return block.Type + "." + providerName + "." + alias + ".tf"
+							}
+						}
+					}
+				}
+				return block.Type + "." + providerName + ".tf"
 			}
+		case "variable", "module", "output":
+			if len(block.Labels) >= 1 {
+				return block.Type + "." + block.Labels[0] + ".tf"
+			}
+		case "locals":
+			return "locals.tf"
 		case "terraform":
 			return "terraform.tf"
 		}
