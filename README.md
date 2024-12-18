@@ -12,7 +12,8 @@ Currently it runs only in the current directory and does not recurse into subdir
 ### On Linux & macOS using [Homebrew](https://brew.sh)
 
 ```bash
-brew install obay/tap/tfren
+brew tap obay/tap
+brew install tfren
 ```
 
 ### On Windows using [Scoop](https://scoop.sh)
