@@ -1,3 +1,3 @@
 package main
 
-var version = "dev" // This will be overwritten during build
+var Version = "dev" // This will be overwritten during build
