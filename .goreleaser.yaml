@@ -38,7 +38,7 @@ changelog:
       - "^test:"
 
 brews:
-  - name: "{{ .Env.PROJECT_NAME }}"
+  - name: tfren
     # GOARM to specify which 32-bit arm version to use if there are multiple versions
     # from the build section. Brew formulas support atm only one 32-bit version.
     # Default is 6 for all artifacts or each id if there a multiple versions.
@@ -46,26 +46,26 @@ brews:
 
     # GitHub/GitLab repository to push the formula to
     repository:
-      owner: "{{ .Env.GITHUB_OWNER }}"
+      owner: obay
       name: homebrew-tap
       token: "{{ .Env.GITHUB_TOKEN }}"
-      branch: "{{ .Env.GITHUB_BRANCH }}"
+      branch: main
 
     # Template for the url which is determined by the given Token (Github or gitlab)
-    url_template: "https://github.com/{{ .Env.GITHUB_REPOSITORY_OWNER }}/{{ .ProjectName }}/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
 
     # Git author used to commit to the repository.
     # Defaults are shown.
     commit_author:
-      name: "{{ .Env.GITHUB_AUTHOR_NAME }}"
-      email: "{{ .Env.GITHUB_AUTHOR_EMAIL }}"
+      name: Ahmad Obay
+      email: obay@xtools.com
 
     # Your app's homepage.
     # Default is empty.
-    homepage: "https://github.com/{{ .Env.GITHUB_REPOSITORY_OWNER }}/{{ .ProjectName }}"
+    homepage: "https://github.com/obay/tfren"
 
     # Your app's description.
-    description: "{{ .Env.PROJECT_DESCRIPTION }}"
+    description: "A tool to rename Terraform files accodrind to the resource type and name."
 
     # Setting this will prevent goreleaser to actually try to commit the updated
     # formula - instead, the formula file will be stored on the dist folder only,
@@ -92,21 +92,21 @@ brews:
       bin.install "tfren"
 
 scoops:
-  - name: "{{ .Env.PROJECT_NAME }}"
-    url_template: "http://github.com/{{ .Env.GITHUB_REPOSITORY_OWNER }}/{{ .ProjectName }}/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  - name: tfren
+    url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     commit_author:
-      name: "{{ .Env.GITHUB_AUTHOR_NAME }}"
-      email: "{{ .Env.GITHUB_AUTHOR_EMAIL }}"
+      name: Ahmad Obay
+      email: obay@xtools.com
     commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
-    homepage: "https://github.com/{{ .Env.GITHUB_REPOSITORY_OWNER }}/{{ .ProjectName }}"
-    description: "{{ .Env.PROJECT_DESCRIPTION }}"
+    homepage: "https://github.com/obay/tfren"
+    description: "A tool to rename Terraform files accodrind to the resource type and name."
     license: MIT
     persist:
       - "data"
       - "config.toml"
     repository:
-      owner: "{{ .Env.GITHUB_OWNER }}"
+      owner: obay
       name: scoop-bucket
-      branch: "{{ .Env.GITHUB_BRANCH }}"
+      branch: main
       token: "{{ .Env.GITHUB_TOKEN }}"
       
