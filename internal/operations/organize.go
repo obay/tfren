@@ -11,7 +11,9 @@ func Organize(opts Options, result *output.Result, console *output.Console) erro
 
 	result.FilesProcessed = 0
 
-	if err := Rename(opts, result, console); err != nil {
+	// Rename phase is silent during organize - pass nil console
+	// Files just created by split will be "already compliant" which is expected
+	if err := Rename(opts, result, nil); err != nil {
 		return err
 	}
 

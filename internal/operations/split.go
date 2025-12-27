@@ -3,6 +3,7 @@ package operations
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/obay/tfren/internal/hcl"
 	"github.com/obay/tfren/internal/naming"
@@ -52,21 +53,41 @@ func splitFile(path string, opts Options, result *output.Result, console *output
 	dir := filepath.Dir(path)
 	var targets []string
 
+	// First pass: collect targets and check for conflicts
 	for _, block := range parsed.Blocks {
 		newName := naming.GenerateFileName(block.Type, block.Labels, block.Alias)
 		if newName == "" {
 			continue
 		}
-
 		newPath := filepath.Join(dir, newName)
-		targets = append(targets, newName)
-
 		if FileExists(newPath) {
 			result.AddSkip(newName, "file already exists")
 			if console != nil {
 				console.Error("Cannot create " + newName + " - file already exists")
 			}
 			continue
+		}
+		targets = append(targets, newName)
+	}
+
+	if len(targets) == 0 {
+		return nil
+	}
+
+	// Print header before creating files
+	if console != nil {
+		console.Success("Splitting " + filepath.Base(path) + " → " + strconv.Itoa(len(targets)) + " files:")
+	}
+
+	// Second pass: create files
+	for _, block := range parsed.Blocks {
+		newName := naming.GenerateFileName(block.Type, block.Labels, block.Alias)
+		if newName == "" {
+			continue
+		}
+		newPath := filepath.Join(dir, newName)
+		if FileExists(newPath) {
+			continue // Already reported in first pass
 		}
 
 		if !opts.DryRun {
@@ -77,21 +98,15 @@ func splitFile(path string, opts Options, result *output.Result, console *output
 		}
 
 		if console != nil {
-			console.Success("Created: " + newName)
+			console.Print("  → " + newName)
 		}
 	}
 
-	if len(targets) > 0 {
-		result.AddSplit(filepath.Base(path), targets)
+	result.AddSplit(filepath.Base(path), targets)
 
-		if !opts.DryRun && !opts.KeepOriginal {
-			if err := os.Remove(path); err != nil {
-				return err
-			}
-		}
-
-		if console != nil {
-			console.Success("Split " + filepath.Base(path) + " into " + string(rune(len(targets))) + " files")
+	if !opts.DryRun && !opts.KeepOriginal {
+		if err := os.Remove(path); err != nil {
+			return err
 		}
 	}
 
