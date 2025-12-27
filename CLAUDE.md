@@ -71,7 +71,6 @@ go build -ldflags="-s -w -X github.com/obay/tfren/internal/cli.Version=<version>
 - `github.com/spf13/cobra`: CLI framework
 - `github.com/spf13/viper`: Configuration management
 - `github.com/hashicorp/hcl/v2`: HCL parsing
-- `github.com/charmbracelet/log`: Structured logging
 - `github.com/fatih/color`: Terminal colors
 
 ## File Naming Convention (OTN)
