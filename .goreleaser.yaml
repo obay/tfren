@@ -21,8 +21,12 @@ builds:
       - -s -w -X github.com/obay/tfren/internal/cli.Version={{.Version}}
 
 archives:
-  - format: tar.gz
-
+  - formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -30,10 +34,6 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # use zip for windows archives
-    format_overrides:
-      - goos: windows
-        format: zip
 
 changelog:
   sort: asc
@@ -44,15 +44,15 @@ changelog:
 
 brews:
   - name: tfren
-    goarm: 6
+    goarm: "6"
 
     repository:
       owner: obay
       name: homebrew-tap
-      token: "{{ .Env.GITHUB_TOKEN }}"
+      token: "{{ .Env.GH_TOKEN }}"
       branch: main
 
-    url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "https://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
 
     commit_author:
       name: Ahmad Obay
@@ -64,19 +64,15 @@ brews:
 
     skip_upload: false
 
-    dependencies:
-      - name: go
-        type: build
-
-    test: |
-      assert shell_output("#{bin}/tfren version")
-
     install: |
       bin.install "tfren"
 
+    test: |
+      assert_match version.to_s, shell_output("#{bin}/tfren version")
+
 scoops:
   - name: tfren
-    url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "https://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     commit_author:
       name: Ahmad Obay
       email: obay@xtools.com
@@ -88,4 +84,4 @@ scoops:
       owner: obay
       name: scoop-bucket
       branch: main
-      token: "{{ .Env.GITHUB_TOKEN }}"
+      token: "{{ .Env.GH_TOKEN }}"
