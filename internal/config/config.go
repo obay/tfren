@@ -11,6 +11,8 @@ type Config struct {
 	Verbose    bool
 	Quiet      bool
 	JSONOutput bool
+	NoGitCheck bool
+	Force      bool
 }
 
 func Get() *Config {
@@ -21,5 +23,7 @@ func Get() *Config {
 		Verbose:    viper.GetBool("verbose"),
 		Quiet:      viper.GetBool("quiet"),
 		JSONOutput: viper.GetBool("json"),
+		NoGitCheck: viper.GetBool("no_git_check"),
+		Force:      viper.GetBool("force"),
 	}
 }

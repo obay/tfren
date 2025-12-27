@@ -43,6 +43,8 @@ func init() {
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "suppress non-error output")
 	rootCmd.PersistentFlags().Bool("json", false, "output in JSON format")
+	rootCmd.PersistentFlags().Bool("no-git-check", false, "skip git repository status check")
+	rootCmd.PersistentFlags().BoolP("force", "f", false, "skip confirmation prompts")
 
 	viper.BindPFlag("directory", rootCmd.PersistentFlags().Lookup("directory"))
 	viper.BindPFlag("recursive", rootCmd.PersistentFlags().Lookup("recursive"))
@@ -50,6 +52,8 @@ func init() {
 	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 	viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
 	viper.BindPFlag("json", rootCmd.PersistentFlags().Lookup("json"))
+	viper.BindPFlag("no_git_check", rootCmd.PersistentFlags().Lookup("no-git-check"))
+	viper.BindPFlag("force", rootCmd.PersistentFlags().Lookup("force"))
 
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(splitCmd)
@@ -85,13 +89,33 @@ func preRun(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	if cmd.Name() == "validate" || cfg.DryRun {
+	if cmd.Name() == "validate" || cmd.Name() == "version" || cfg.DryRun {
 		return nil
 	}
 
-	status := git.CheckStatus(cfg.Directory)
+	// Check if git check is disabled
+	noGitCheck, _ := cmd.Flags().GetBool("no-git-check")
+	if noGitCheck {
+		return nil
+	}
+
+	// Show progress while checking git status
+	fmt.Print("Checking git status... ")
+	status := git.CheckStatus(cfg.Directory, cfg.Recursive)
+	fmt.Print("\r                       \r") // Clear the line
+
 	if warning := status.Warning(); warning != "" {
 		out.Warning(warning)
+	}
+
+	// If uncommitted .tf files in target dir, prompt for confirmation
+	if status.RequiresConfirmation() {
+		force, _ := cmd.Flags().GetBool("force")
+		if !force {
+			if !git.PromptContinue() {
+				return fmt.Errorf("operation cancelled by user")
+			}
+		}
 	}
 
 	return nil
