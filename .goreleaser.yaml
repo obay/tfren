@@ -6,14 +6,19 @@ before:
     - go generate ./...
 
 builds:
-  - env:
+  - main: ./cmd/tfrn
+    binary: tfrn
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
       - windows
       - darwin
+    goarch:
+      - amd64
+      - arm64
     ldflags:
-      - -s -w -X main.Version={{.Version}}
+      - -s -w -X github.com/obay/tfrn/internal/cli.Version={{.Version}}
 
 archives:
   - format: tar.gz
@@ -38,75 +43,49 @@ changelog:
       - "^test:"
 
 brews:
-  - name: tfren
-    # GOARM to specify which 32-bit arm version to use if there are multiple versions
-    # from the build section. Brew formulas support atm only one 32-bit version.
-    # Default is 6 for all artifacts or each id if there a multiple versions.
+  - name: tfrn
     goarm: 6
 
-    # GitHub/GitLab repository to push the formula to
     repository:
       owner: obay
       name: homebrew-tap
       token: "{{ .Env.GITHUB_TOKEN }}"
       branch: main
 
-    # Template for the url which is determined by the given Token (Github or gitlab)
-    url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "http://github.com/obay/tfrn/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
 
-    # Git author used to commit to the repository.
-    # Defaults are shown.
     commit_author:
       name: Ahmad Obay
       email: obay@xtools.com
 
-    # Your app's homepage.
-    # Default is empty.
-    homepage: "https://github.com/obay/tfren"
+    homepage: "https://github.com/obay/tfrn"
 
-    # Your app's description.
-    description: "A tool to rename Terraform files accodrind to the resource type and name."
+    description: "Terraform file organizer - splits and renames files according to OTN naming convention."
 
-    # Setting this will prevent goreleaser to actually try to commit the updated
-    # formula - instead, the formula file will be stored on the dist folder only,
-    # leaving the responsibility of publishing it to the user.
-    # If set to auto, the release will not be uploaded to the homebrew tap
-    # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1
-    # Default is false.
     skip_upload: false
 
-    # Packages your package depends on.
     dependencies:
       - name: go
         type: build
 
-    # So you can `brew test` your formula. 
-    # This is also picked up by the homebrew-core bot
-    # Default is empty.
     test: |
-      assert shell_output("#{bin}/tfren version")
+      assert shell_output("#{bin}/tfrn version")
 
-    # Custom install script for brew.
-    # Default is 'bin.install "program"'.
     install: |
-      bin.install "tfren"
+      bin.install "tfrn"
 
 scoops:
-  - name: tfren
-    url_template: "http://github.com/obay/tfren/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  - name: tfrn
+    url_template: "http://github.com/obay/tfrn/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     commit_author:
       name: Ahmad Obay
       email: obay@xtools.com
     commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
-    homepage: "https://github.com/obay/tfren"
-    description: "A tool to rename Terraform files accodrind to the resource type and name."
+    homepage: "https://github.com/obay/tfrn"
+    description: "Terraform file organizer - splits and renames files according to OTN naming convention."
     license: MIT
-    persist:
-      - "data"
-      - "config.toml"
     repository:
       owner: obay
       name: scoop-bucket
       branch: main
       token: "{{ .Env.GITHUB_TOKEN }}"
-      

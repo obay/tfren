@@ -22,3 +22,17 @@ go.work
 
 dist/
 secretnotes
+
+# Auto Claude data directory
+.auto-claude/
+
+# Build artifacts (binaries at root)
+/tfrn
+/tfren
+
+# Local scripts and config
+*.sh
+.claude_settings.json
+
+# Test files
+variable.vm.tf
