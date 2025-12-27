@@ -51,14 +51,24 @@ func splitFile(path string, opts Options, result *output.Result, console *output
 	}
 
 	dir := filepath.Dir(path)
+	sourceName := filepath.Base(path)
 	var targets []string
+	var keepInPlace *hcl.Block // Block that should stay in the source file
 
 	// First pass: collect targets and check for conflicts
-	for _, block := range parsed.Blocks {
+	for i, block := range parsed.Blocks {
 		newName := naming.GenerateFileName(block.Type, block.Labels, block.Alias)
 		if newName == "" {
 			continue
 		}
+
+		// If target name matches source, this block stays in place
+		if newName == sourceName {
+			keepInPlace = &parsed.Blocks[i]
+			targets = append(targets, newName)
+			continue
+		}
+
 		newPath := filepath.Join(dir, newName)
 		if FileExists(newPath) {
 			result.AddSkip(newName, "file already exists")
@@ -79,12 +89,21 @@ func splitFile(path string, opts Options, result *output.Result, console *output
 		console.Success("Splitting " + filepath.Base(path) + " → " + strconv.Itoa(len(targets)) + " files:")
 	}
 
-	// Second pass: create files
+	// Second pass: create new files (skip the block that stays in place)
 	for _, block := range parsed.Blocks {
 		newName := naming.GenerateFileName(block.Type, block.Labels, block.Alias)
 		if newName == "" {
 			continue
 		}
+
+		// Skip the block that stays in place - it will be handled at the end
+		if newName == sourceName {
+			if console != nil {
+				console.Print("  → " + newName + " (rewritten)")
+			}
+			continue
+		}
+
 		newPath := filepath.Join(dir, newName)
 		if FileExists(newPath) {
 			continue // Already reported in first pass
@@ -104,9 +123,19 @@ func splitFile(path string, opts Options, result *output.Result, console *output
 
 	result.AddSplit(filepath.Base(path), targets)
 
+	// Handle the source file
 	if !opts.DryRun && !opts.KeepOriginal {
-		if err := os.Remove(path); err != nil {
-			return err
+		if keepInPlace != nil {
+			// Rewrite source file with only the block that matches its name
+			content := keepInPlace.ContentWithComments()
+			if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+				return err
+			}
+		} else {
+			// No block matches source name, delete the source file
+			if err := os.Remove(path); err != nil {
+				return err
+			}
 		}
 	}
 

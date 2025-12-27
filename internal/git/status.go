@@ -1,10 +1,7 @@
 package git
 
 import (
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
+	"github.com/go-git/go-git/v5"
 )
 
 type Status int
@@ -16,22 +13,28 @@ const (
 )
 
 func CheckStatus(dir string) Status {
-	gitDir := filepath.Join(dir, ".git")
-	if _, err := os.Stat(gitDir); os.IsNotExist(err) {
-		return NotARepo
-	}
-
-	cmd := exec.Command("git", "-C", dir, "status", "--porcelain")
-	output, err := cmd.Output()
+	// Open repo, walking parent directories to find .git
+	repo, err := git.PlainOpenWithOptions(dir, &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
 	if err != nil {
 		return NotARepo
 	}
 
-	if strings.TrimSpace(string(output)) != "" {
-		return DirtyRepo
+	worktree, err := repo.Worktree()
+	if err != nil {
+		return NotARepo
 	}
 
-	return CleanRepo
+	status, err := worktree.Status()
+	if err != nil {
+		return NotARepo
+	}
+
+	if status.IsClean() {
+		return CleanRepo
+	}
+	return DirtyRepo
 }
 
 func (s Status) Warning() string {
