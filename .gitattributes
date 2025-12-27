@@ -1,0 +1,20 @@
+# Force LF line endings for all text files
+* text=auto eol=lf
+
+# Explicitly declare text files
+*.go text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf
+*.json text eol=lf
+*.mod text eol=lf
+*.sum text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+LICENSE text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.gif binary
