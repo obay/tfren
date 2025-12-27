@@ -3,7 +3,7 @@ package cli
 import (
 	"strconv"
 
-	"github.com/obay/tfrn/internal/output"
+	"github.com/obay/tfren/internal/output"
 )
 
 func printSummary(result *output.Result, console *output.Console) {

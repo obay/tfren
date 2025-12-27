@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/obay/tfrn/internal/cli"
+	"github.com/obay/tfren/internal/cli"
 )
 
 func main() {

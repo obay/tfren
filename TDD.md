@@ -1,6 +1,6 @@
 # Technical Design Document (TDD)
 
-## tfrn - Terraform File Organizer
+## tfren - Terraform File Organizer
 
 **Version:** 1.0
 **Date:** December 2024
@@ -11,7 +11,7 @@
 
 ## 1. Overview
 
-This document describes the technical architecture and implementation details for `tfrn`, a CLI tool for organizing Terraform configuration files according to Obay's Terraform Naming Convention (OTN).
+This document describes the technical architecture and implementation details for `tfren`, a CLI tool for organizing Terraform configuration files according to Obay's Terraform Naming Convention (OTN).
 
 ### 1.1 Scope
 
@@ -35,9 +35,9 @@ This TDD covers:
 ## 2. Project Structure
 
 ```
-tfrn/
+tfren/
 ├── cmd/
-│   └── tfrn/
+│   └── tfren/
 │       └── main.go                 # Entry point
 ├── internal/
 │   ├── cli/
@@ -168,9 +168,9 @@ type Result struct {
 // internal/cli/root.go
 
 var rootCmd = &cobra.Command{
-    Use:   "tfrn",
+    Use:   "tfren",
     Short: "Terraform file organizer",
-    Long:  `tfrn organizes Terraform files according to OTN naming convention.`,
+    Long:  `tfren organizes Terraform files according to OTN naming convention.`,
     PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
         // Load config, check git status, display warnings
         return preRun(cmd)
@@ -191,7 +191,7 @@ func init() {
 ```
 
 **Default Command Behavior:**
-Running `tfrn` without a subcommand will execute `organize` (split + rename).
+Running `tfren` without a subcommand will execute `organize` (split + rename).
 
 ### 4.2 Git Safety Checks
 
@@ -648,7 +648,7 @@ testdata/
 ### 9.1 Build Command
 
 ```bash
-go build -ldflags="-s -w -X main.Version=${VERSION}" -o tfrn ./cmd/tfrn
+go build -ldflags="-s -w -X main.Version=${VERSION}" -o tfren ./cmd/tfren
 ```
 
 ### 9.2 GoReleaser Configuration
@@ -657,7 +657,7 @@ Key points for `.goreleaser.yaml`:
 - Build for linux/amd64, linux/arm64, darwin/amd64, darwin/arm64, windows/amd64
 - Homebrew tap: `obay/homebrew-tap`
 - Scoop bucket: `obay/scoop-bucket`
-- Binary name: `tfrn`
+- Binary name: `tfren`
 
 ---
 
@@ -681,16 +681,16 @@ The existing codebase has:
 6. Add Viper configuration
 7. Add Git status checks
 8. Add JSON output support
-9. Update entry point in `cmd/tfrn/main.go`
+9. Update entry point in `cmd/tfren/main.go`
 10. Add comprehensive tests
 
 ### 10.3 Backward Compatibility
 
 The new CLI structure maintains compatibility:
-- `tfrn` (no args) → runs `organize` (combines split + rename)
-- `tfrn --version` → still works
-- `tfrn split` → explicit split command
-- `tfrn rename` → explicit rename command
+- `tfren` (no args) → runs `organize` (combines split + rename)
+- `tfren --version` → still works
+- `tfren split` → explicit split command
+- `tfren rename` → explicit rename command
 
 ---
 

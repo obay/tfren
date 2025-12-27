@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"github.com/obay/tfrn/internal/output"
+	"github.com/obay/tfren/internal/output"
 )
 
 func Organize(opts Options, result *output.Result, console *output.Console) error {

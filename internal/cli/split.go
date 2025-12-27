@@ -1,9 +1,9 @@
 package cli
 
 import (
-	"github.com/obay/tfrn/internal/config"
-	"github.com/obay/tfrn/internal/operations"
-	"github.com/obay/tfrn/internal/output"
+	"github.com/obay/tfren/internal/config"
+	"github.com/obay/tfren/internal/operations"
+	"github.com/obay/tfren/internal/output"
 	"github.com/spf13/cobra"
 )
 

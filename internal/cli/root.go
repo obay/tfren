@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/obay/tfrn/internal/config"
-	"github.com/obay/tfrn/internal/git"
-	"github.com/obay/tfrn/internal/output"
+	"github.com/obay/tfren/internal/config"
+	"github.com/obay/tfren/internal/git"
+	"github.com/obay/tfren/internal/output"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -18,15 +18,15 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "tfrn",
+	Use:   "tfren",
 	Short: "Terraform file organizer",
-	Long: `tfrn organizes Terraform configuration files according to
+	Long: `tfren organizes Terraform configuration files according to
 Obay's Terraform Naming Convention (OTN).
 
 It splits multi-block files into individual files and renames them
 to follow the pattern: <block_type>.<provider>.<name>.tf
 
-Running 'tfrn' without a subcommand executes 'organize' (split + rename).`,
+Running 'tfren' without a subcommand executes 'organize' (split + rename).`,
 	PersistentPreRunE: preRun,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return organizeCmd.RunE(cmd, args)
@@ -36,7 +36,7 @@ Running 'tfrn' without a subcommand executes 'organize' (split + rename).`,
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is .tfrn.json)")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is .tfren.json)")
 	rootCmd.PersistentFlags().StringP("directory", "d", ".", "target directory")
 	rootCmd.PersistentFlags().BoolP("recursive", "r", false, "process subdirectories recursively")
 	rootCmd.PersistentFlags().BoolP("dry-run", "n", false, "show what would be done without making changes")
@@ -62,7 +62,7 @@ func initConfig() {
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {
-		viper.SetConfigName(".tfrn")
+		viper.SetConfigName(".tfren")
 		viper.SetConfigType("json")
 		viper.AddConfigPath(".")
 		home, err := os.UserHomeDir()
@@ -71,7 +71,7 @@ func initConfig() {
 		}
 	}
 
-	viper.SetEnvPrefix("TFRN")
+	viper.SetEnvPrefix("TFREN")
 	viper.AutomaticEnv()
 
 	viper.ReadInConfig()
@@ -101,7 +101,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print version information",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("tfrn version %s\n", Version)
+		fmt.Printf("tfren version %s\n", Version)
 	},
 }
 

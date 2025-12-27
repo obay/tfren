@@ -1,4 +1,4 @@
-module github.com/obay/tfrn
+module github.com/obay/tfren
 
 go 1.23.4
 

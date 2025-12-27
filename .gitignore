@@ -27,7 +27,6 @@ secretnotes
 .auto-claude/
 
 # Build artifacts (binaries at root)
-/tfrn
 /tfren
 
 # Local scripts and config

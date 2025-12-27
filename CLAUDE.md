@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is `tfrn` - a Go CLI tool that organizes Terraform files according to Obay's Terraform Naming Convention (OTN). The tool parses `.tf` files and:
+This is `tfren` - a Go CLI tool that organizes Terraform files according to Obay's Terraform Naming Convention (OTN). The tool parses `.tf` files and:
 - **Splits** multi-block files into individual files (one block per file)
 - **Renames** files to follow the pattern `<block_type>.<provider>.<name>.tf`
 - **Validates** file organization against the naming convention
@@ -12,8 +12,8 @@ This is `tfrn` - a Go CLI tool that organizes Terraform files according to Obay'
 ## Architecture
 
 ```
-tfrn/
-├── cmd/tfrn/main.go          # Entry point
+tfren/
+├── cmd/tfren/main.go          # Entry point
 ├── internal/
 │   ├── cli/                  # Cobra CLI commands
 │   │   ├── root.go           # Root command, global flags
@@ -45,20 +45,20 @@ tfrn/
 ### Building
 
 ```bash
-go build -o tfrn ./cmd/tfrn
-go build -ldflags="-s -w -X github.com/obay/tfrn/internal/cli.Version=<version>" -o tfrn ./cmd/tfrn
+go build -o tfren ./cmd/tfren
+go build -ldflags="-s -w -X github.com/obay/tfren/internal/cli.Version=<version>" -o tfren ./cmd/tfren
 ```
 
 ### Testing locally
 
 ```bash
-./tfrn --help
-./tfrn validate                    # Check naming convention
-./tfrn validate --json             # JSON output for LLMs
-./tfrn split --dry-run             # Preview split operation
-./tfrn rename --dry-run            # Preview rename operation
-./tfrn organize --dry-run          # Preview split+rename
-./tfrn                             # Run organize (default)
+./tfren --help
+./tfren validate                    # Check naming convention
+./tfren validate --json             # JSON output for LLMs
+./tfren split --dry-run             # Preview split operation
+./tfren rename --dry-run            # Preview rename operation
+./tfren organize --dry-run          # Preview split+rename
+./tfren                             # Run organize (default)
 ```
 
 ### Release Process

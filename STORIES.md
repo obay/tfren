@@ -1,6 +1,6 @@
 # Story Map & Epic Breakdown
 
-## tfrn - Terraform File Organizer
+## tfren - Terraform File Organizer
 
 **Version:** 1.0
 **Date:** December 2024
@@ -37,12 +37,12 @@
 
 **Acceptance Criteria:**
 - [ ] Create directory structure as defined in TDD Section 2
-- [ ] Initialize go.mod with module `github.com/obay/tfrn`
+- [ ] Initialize go.mod with module `github.com/obay/tfren`
 - [ ] Add Cobra and Viper dependencies
 - [ ] Create placeholder files for all packages
 
 **Tasks:**
-- Create `cmd/tfrn/main.go`
+- Create `cmd/tfren/main.go`
 - Create `internal/` package directories
 - Run `go mod init` and `go mod tidy`
 
@@ -50,14 +50,14 @@
 
 #### Story 1.2: Implement Root Command
 **As a** user
-**I want** to run `tfrn` with global flags
+**I want** to run `tfren` with global flags
 **So that** I can control the tool's behavior
 
 **Acceptance Criteria:**
-- [ ] `tfrn --version` prints version
-- [ ] `tfrn --help` shows usage
+- [ ] `tfren --version` prints version
+- [ ] `tfren --help` shows usage
 - [ ] Global flags work: `-d`, `-r`, `-n`, `-v`, `-q`, `--json`
-- [ ] Running `tfrn` without subcommand defaults to `organize`
+- [ ] Running `tfren` without subcommand defaults to `organize`
 
 **Tasks:**
 - Implement `internal/cli/root.go` with Cobra
@@ -72,10 +72,10 @@
 **So that** I can perform specific operations
 
 **Acceptance Criteria:**
-- [ ] `tfrn split --help` shows split usage
-- [ ] `tfrn rename --help` shows rename usage
-- [ ] `tfrn organize --help` shows organize usage
-- [ ] `tfrn validate --help` shows validate usage
+- [ ] `tfren split --help` shows split usage
+- [ ] `tfren rename --help` shows rename usage
+- [ ] `tfren organize --help` shows organize usage
+- [ ] `tfren validate --help` shows validate usage
 - [ ] Each command accepts its specific flags
 
 **Tasks:**
@@ -307,7 +307,7 @@
 - [ ] First splits all multi-block files
 - [ ] Then renames all files (including newly created ones)
 - [ ] Reports summary of all changes
-- [ ] `tfrn` without subcommand runs organize
+- [ ] `tfren` without subcommand runs organize
 
 **Tasks:**
 - Implement `internal/operations/organize.go`
@@ -439,8 +439,8 @@
 **So that** I don't have to repeat flags every time
 
 **Acceptance Criteria:**
-- [ ] Reads `.tfrn.json` from current directory
-- [ ] Reads `.tfrn.json` from home directory as fallback
+- [ ] Reads `.tfren.json` from current directory
+- [ ] Reads `.tfren.json` from home directory as fallback
 - [ ] Command-line flags override config file values
 
 **Tasks:**
@@ -456,13 +456,13 @@
 **So that** I can set options in my CI environment
 
 **Acceptance Criteria:**
-- [ ] `TFRN_RECURSIVE=true` sets recursive mode
-- [ ] `TFRN_DRY_RUN=true` sets dry run mode
+- [ ] `TFREN_RECURSIVE=true` sets recursive mode
+- [ ] `TFREN_DRY_RUN=true` sets dry run mode
 - [ ] Environment variables override config file
 
 **Tasks:**
 - Configure Viper environment variable binding
-- Use `TFRN_` prefix
+- Use `TFREN_` prefix
 
 ---
 
@@ -488,7 +488,7 @@
 
 #### Story 11.2: Version Injection
 **As a** user
-**I want** `tfrn --version` to show the correct version
+**I want** `tfren --version` to show the correct version
 **So that** I know which version I'm running
 
 **Acceptance Criteria:**

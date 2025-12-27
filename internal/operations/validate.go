@@ -3,9 +3,9 @@ package operations
 import (
 	"path/filepath"
 
-	"github.com/obay/tfrn/internal/hcl"
-	"github.com/obay/tfrn/internal/naming"
-	"github.com/obay/tfrn/internal/output"
+	"github.com/obay/tfren/internal/hcl"
+	"github.com/obay/tfren/internal/naming"
+	"github.com/obay/tfren/internal/output"
 )
 
 func Validate(opts Options, result *output.Result, console *output.Console) error {

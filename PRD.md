@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD)
 
-## tfrn - Terraform File Organizer
+## tfren - Terraform File Organizer
 
 **Version:** 1.0
 **Date:** December 2024
@@ -13,7 +13,7 @@
 
 ### 1.1 Overview
 
-`tfrn` (Terraform Rename) is a CLI tool for organizing Terraform configuration files according to Obay's Terraform Naming Convention (OTN). It automates file splitting, renaming, and validation to maintain a clean, navigable Terraform codebase.
+`tfren` (Terraform Rename) is a CLI tool for organizing Terraform configuration files according to Obay's Terraform Naming Convention (OTN). It automates file splitting, renaming, and validation to maintain a clean, navigable Terraform codebase.
 
 ### 1.2 Problem Statement
 
@@ -25,7 +25,7 @@ Terraform projects often suffer from poor file organization:
 
 ### 1.3 Solution
 
-`tfrn` provides a comprehensive tool that:
+`tfren` provides a comprehensive tool that:
 1. **Splits** multi-block Terraform files into individual files (one block per file)
 2. **Renames** files according to a standardized naming convention
 3. **Validates** file organization against the naming convention
@@ -92,7 +92,7 @@ OTN brings these same benefits to Terraform by treating each HCL block (resource
 ### 4.1 Command Structure
 
 ```
-tfrn [command] [flags]
+tfren [command] [flags]
 
 Commands:
   split       Split multi-block files into individual files
@@ -109,12 +109,12 @@ Global Flags:
   -q, --quiet              Suppress non-error output
       --json               Output in JSON format (for LLM/automation)
       --version            Print version information
-  -h, --help               Help for tfrn
+  -h, --help               Help for tfren
 ```
 
 ### 4.2 Safety Checks
 
-Before modifying any files, `tfrn` checks whether the target directory is under Git version control:
+Before modifying any files, `tfren` checks whether the target directory is under Git version control:
 
 - **Not a Git repository**: Display a warning that changes cannot be easily undone and recommend initializing a Git repository
 - **Git repository with uncommitted changes**: Display a warning that there are uncommitted changes and recommend committing or stashing before proceeding
@@ -124,12 +124,12 @@ These warnings are informational only and do not block the operation. Users can 
 
 ### 4.3 Commands
 
-#### 4.3.1 `tfrn split`
+#### 4.3.1 `tfren split`
 
 Split files containing multiple blocks into separate files.
 
 ```bash
-tfrn split [flags]
+tfren split [flags]
 
 Flags:
   --keep-original   Keep the original file after splitting
@@ -146,12 +146,12 @@ Flags:
 **Comment Handling:**
 Comments immediately preceding a block are associated with that block and included in the split file. File-level headers (comments at the very top before any blocks) and "floating" comments (comments not directly attached to a block) are discarded. Inline comments within blocks are always preserved.
 
-#### 4.3.2 `tfrn rename`
+#### 4.3.2 `tfren rename`
 
 Rename single-block files to match naming convention.
 
 ```bash
-tfrn rename [flags]
+tfren rename [flags]
 
 Flags:
   --backup   Create .bak backup before renaming
@@ -163,14 +163,14 @@ Flags:
 3. Generate correct filename based on block content
 4. Rename file if name doesn't match convention
 
-#### 4.3.3 `tfrn organize`
+#### 4.3.3 `tfren organize`
 
 Combines split and rename operations (default command).
 
 ```bash
-tfrn organize [flags]
+tfren organize [flags]
 # or simply:
-tfrn [flags]
+tfren [flags]
 ```
 
 **Behavior:**
@@ -178,12 +178,12 @@ tfrn [flags]
 2. Then, rename all files to match convention
 3. Report summary of changes
 
-#### 4.3.4 `tfrn validate`
+#### 4.3.4 `tfren validate`
 
 Check files against naming convention without making changes.
 
 ```bash
-tfrn validate [flags]
+tfren validate [flags]
 
 Flags:
   --strict   Exit with error code if any violations found
@@ -213,7 +213,7 @@ Flags:
 ### 5.2 Architecture
 
 ```
-tfrn/
+tfren/
 ├── cmd/
 │   ├── root.go           # Root command, global flags
 │   ├── split.go          # Split subcommand
@@ -239,7 +239,7 @@ tfrn/
 
 ### 5.3 Configuration File Support
 
-`tfrn` supports configuration via `.tfrn.json`:
+`tfren` supports configuration via `.tfren.json`:
 
 ```json
 {
@@ -256,7 +256,7 @@ tfrn/
 
 Configuration priority (highest to lowest):
 1. Command-line flags
-2. Environment variables (`TFRN_*`)
+2. Environment variables (`TFREN_*`)
 3. Configuration file in current directory
 4. Configuration file in home directory
 5. Default values
@@ -319,18 +319,18 @@ When `--json` flag is used, output structured JSON for LLM consumption:
 
 ```bash
 # Show what would be organized
-tfrn --dry-run --json
+tfren --dry-run --json
 
 # Organize and report results
-tfrn organize --json
+tfren organize --json
 
 # Validate before PR
-tfrn validate --strict --json
+tfren validate --strict --json
 ```
 
 **Prompt example for LLMs:**
 
-> "Run `tfrn validate --json` to check if Terraform files follow the naming convention. Parse the JSON output to identify files that need attention."
+> "Run `tfren validate --json` to check if Terraform files follow the naming convention. Parse the JSON output to identify files that need attention."
 
 ---
 
@@ -349,7 +349,7 @@ tfrn validate --strict --json
 
 | ID | As a... | I want to... | So that... |
 |----|---------|--------------|------------|
-| US-5 | LLM (Claude Code) | Get JSON output from tfrn | I can parse and act on results |
+| US-5 | LLM (Claude Code) | Get JSON output from tfren | I can parse and act on results |
 | US-6 | CI Pipeline | Run validation with strict mode | Builds fail on naming violations |
 | US-7 | Automation script | Process results programmatically | I can integrate with other tools |
 
@@ -359,10 +359,10 @@ tfrn validate --strict --json
 
 ### 8.1 Core Functionality
 
-- [ ] `tfrn split` correctly extracts all block types
-- [ ] `tfrn rename` handles all OTN naming patterns
-- [ ] `tfrn organize` combines both operations seamlessly
-- [ ] `tfrn validate` detects all naming violations
+- [ ] `tfren split` correctly extracts all block types
+- [ ] `tfren rename` handles all OTN naming patterns
+- [ ] `tfren organize` combines both operations seamlessly
+- [ ] `tfren validate` detects all naming violations
 - [ ] `--dry-run` makes no file system changes
 - [ ] `--json` produces valid, parseable JSON
 - [ ] `--recursive` processes subdirectories correctly
@@ -391,10 +391,10 @@ tfrn validate --strict --json
 
 | Platform | Method | Command |
 |----------|--------|---------|
-| macOS | Homebrew | `brew install obay/tap/tfrn` |
-| Windows | Scoop | `scoop bucket add obay https://github.com/obay/scoop-bucket && scoop install tfrn` |
-| Linux | Homebrew | `brew install obay/tap/tfrn` |
-| Any | Go | `go install github.com/obay/tfrn@latest` |
+| macOS | Homebrew | `brew install obay/tap/tfren` |
+| Windows | Scoop | `scoop bucket add obay https://github.com/obay/scoop-bucket && scoop install tfren` |
+| Linux | Homebrew | `brew install obay/tap/tfren` |
+| Any | Go | `go install github.com/obay/tfren@latest` |
 
 ### 9.2 Release Artifacts
 
@@ -405,7 +405,7 @@ tfrn validate --strict --json
 ### 9.3 GoReleaser Configuration
 
 GoReleaser will be configured to:
-- Build `tfrn` binary for all target platforms
+- Build `tfren` binary for all target platforms
 - Publish to GitHub Releases
 - Update Homebrew tap
 - Update Scoop bucket
@@ -445,8 +445,8 @@ terraform.tf                                 # Terraform configuration
 $ ls
 main.tf  # Contains 10 resources, 3 data sources, 5 variables
 
-# Run tfrn
-$ tfrn organize --verbose
+# Run tfren
+$ tfren organize --verbose
 
 # After
 $ ls
