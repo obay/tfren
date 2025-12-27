@@ -45,6 +45,7 @@ changelog:
 brews:
   - name: tfren
     goarm: "6"
+    directory: Formula
 
     repository:
       owner: obay
