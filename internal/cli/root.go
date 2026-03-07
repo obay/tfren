@@ -60,6 +60,7 @@ func init() {
 	rootCmd.AddCommand(renameCmd)
 	rootCmd.AddCommand(organizeCmd)
 	rootCmd.AddCommand(validateCmd)
+	rootCmd.AddCommand(azureNamingCmd)
 }
 
 func initConfig() {
@@ -89,7 +90,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	if cmd.Name() == "validate" || cmd.Name() == "version" || cfg.DryRun {
+	if cmd.Name() == "validate" || cmd.Name() == "azure-naming" || cmd.Name() == "version" || cfg.DryRun {
 		return nil
 	}
 

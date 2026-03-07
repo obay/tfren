@@ -14,11 +14,16 @@ type Result struct {
 	FilesSplit           int         `json:"files_split"`
 	FilesRenamed         int         `json:"files_renamed"`
 	FilesSkipped         int         `json:"files_skipped"`
-	FilesAlreadyCompliant int        `json:"files_already_compliant"`
-	Changes              []Change    `json:"changes"`
-	Violations           []Violation `json:"violations,omitempty"`
-	Errors               []string    `json:"errors,omitempty"`
-	ExitCode             int         `json:"exit_code"`
+	FilesAlreadyCompliant int               `json:"files_already_compliant"`
+	Changes              []Change          `json:"changes"`
+	Violations           []Violation       `json:"violations,omitempty"`
+	NamingViolations     []NamingViolation `json:"naming_violations,omitempty"`
+	ResourcesChecked     int               `json:"resources_checked,omitempty"`
+	ResourcesCompliant   int               `json:"resources_compliant,omitempty"`
+	ResourcesSkipped     int               `json:"resources_skipped,omitempty"`
+	ResourcesUnknown     int               `json:"resources_unknown,omitempty"`
+	Errors               []string          `json:"errors,omitempty"`
+	ExitCode             int               `json:"exit_code"`
 }
 
 type Change struct {
@@ -34,6 +39,16 @@ type Violation struct {
 	CurrentName  string `json:"current_name"`
 	ExpectedName string `json:"expected_name"`
 	BlockType    string `json:"block_type"`
+}
+
+type NamingViolation struct {
+	File            string   `json:"file"`
+	ResourceType    string   `json:"resource_type"`
+	ResourceLabel   string   `json:"resource_label"`
+	NameValue       string   `json:"name_value"`
+	ExpectedPrefix  string   `json:"expected_prefix"`
+	ExpectedPattern string   `json:"expected_pattern"`
+	Issues          []string `json:"issues"`
 }
 
 func NewResult(version, command, directory string, dryRun bool) *Result {
@@ -87,6 +102,21 @@ func (r *Result) AddViolation(file, currentName, expectedName, blockType string)
 		CurrentName:  currentName,
 		ExpectedName: expectedName,
 		BlockType:    blockType,
+	})
+}
+
+func (r *Result) AddNamingViolation(file, resourceType, resourceLabel, nameValue, expectedPrefix, expectedPattern string, issues []string) {
+	if r.NamingViolations == nil {
+		r.NamingViolations = []NamingViolation{}
+	}
+	r.NamingViolations = append(r.NamingViolations, NamingViolation{
+		File:            file,
+		ResourceType:    resourceType,
+		ResourceLabel:   resourceLabel,
+		NameValue:       nameValue,
+		ExpectedPrefix:  expectedPrefix,
+		ExpectedPattern: expectedPattern,
+		Issues:          issues,
 	})
 }
 

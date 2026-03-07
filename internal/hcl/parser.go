@@ -58,6 +58,12 @@ func extractBlocksWithComments(body *hclsyntax.Body, lines []string, source []by
 			block.Alias = extractAlias(hclBlock)
 		}
 
+		if hclBlock.Type == "resource" {
+			name, isDynamic := extractName(hclBlock)
+			block.NameValue = name
+			block.NameDynamic = isDynamic
+		}
+
 		block.Comments = findPrecedingComments(lines, startLine)
 
 		block.RawContent = extractLines(lines, startLine-1, endLine)
@@ -77,4 +83,16 @@ func extractAlias(block *hclsyntax.Block) string {
 		}
 	}
 	return ""
+}
+
+func extractName(block *hclsyntax.Block) (value string, isDynamic bool) {
+	for name, attr := range block.Body.Attributes {
+		if name == "name" {
+			if val, diags := attr.Expr.Value(nil); !diags.HasErrors() {
+				return val.AsString(), false
+			}
+			return "", true
+		}
+	}
+	return "", false
 }

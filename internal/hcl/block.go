@@ -1,13 +1,15 @@
 package hcl
 
 type Block struct {
-	Type       string
-	Labels     []string
-	Alias      string
-	StartLine  int
-	EndLine    int
-	Comments   []string
-	RawContent string
+	Type        string
+	Labels      []string
+	Alias       string
+	NameValue   string // extracted "name" attribute value (if static)
+	NameDynamic bool   // true if "name" uses interpolation/variables
+	StartLine   int
+	EndLine     int
+	Comments    []string
+	RawContent  string
 }
 
 type ParsedFile struct {
